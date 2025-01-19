@@ -7,6 +7,11 @@ def load_image(image_path):
     image = cv2.imread(image_path)
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Преобразование из BGR в RGB
 
+def resize_image(image, size=(224, 224)):
+    """Масштабирование изображения до заданного размера."""
+    resized_image = cv2.resize(image, size, interpolation=cv2.INTER_AREA)
+    return resized_image
+
 def calibrate_image(image):
     """Калибровка изображения (например, изменение яркости и контраста)."""
     # Применение CLAHE (Contrast Limited Adaptive Histogram Equalization)
@@ -29,23 +34,27 @@ def denoise_image(image):
     denoised_image = cv2.medianBlur(image, 5)  # Размер ядра 5
     return denoised_image
 
-def display_images(original, calibrated, normalized, denoised):
+def display_images(original, resized, calibrated, normalized, denoised):
     """Отображение изображений."""
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(12, 10))
     
-    plt.subplot(2, 2, 1)
+    plt.subplot(3, 2, 1)
     plt.title("Original Image")
     plt.imshow(original)
     
-    plt.subplot(2, 2, 2)
+    plt.subplot(3, 2, 2)
+    plt.title("Resized Image")
+    plt.imshow(resized)
+    
+    plt.subplot(3, 2, 3)
     plt.title("Calibrated Image")
     plt.imshow(calibrated)
     
-    plt.subplot(2, 2, 3)
+    plt.subplot(3, 2, 4)
     plt.title("Normalized Image")
     plt.imshow(normalized)
     
-    plt.subplot(2, 2, 4)
+    plt.subplot(3, 2, 5)
     plt.title("Denoised Image")
     plt.imshow(denoised)
     
@@ -53,13 +62,14 @@ def display_images(original, calibrated, normalized, denoised):
     plt.show()
 
 # Путь к изображению
-image_path = 'path_to_your_image.jpg'  # Замените на путь к вашему изображению
+image_path = 'path_to_your_image.jpg'  # Заменить на путь к вашему изображению
 
 # Выполнение обработки
 original_image = load_image(image_path)
-calibrated_image = calibrate_image(original_image)
+resized_image = resize_image(original_image, size=(224, 224))  # Масштабирование до 224x224
+calibrated_image = calibrate_image(resized_image)
 normalized_image = normalize_image(calibrated_image)
 denoised_image = denoise_image(calibrated_image)
 
 # Отображение результатов
-display_images(original_image, calibrated_image, normalized_image, denoised_image)
+display_images(original_image, resized_image, calibrated_image, normalized_image, denoised_image)
